@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright 2019 Björn Kautler
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<dsl-extension kind="buildFeature" type="ssh-tunnel-build-feature" generateDslJar="true">
+    <class name="SshTunnel">
+        <description>
+            A [build feature](https://github.com/Vampire/teamcity-ssh-tunnel) which opens an SSH tunnel with given forward during a build
+        </description>
+    </class>
+    <function name="sshTunnel">
+        <description>
+            Adds a [build feature](https://github.com/Vampire/teamcity-ssh-tunnel) which opens an SSH tunnel with given forward during a build
+        </description>
+    </function>
+    <params>
+        <!-- part of work-around for missing BuildFeature#getRequirements -->
+        <param name="sshTunnelRequirement" description="For TeamCity versions prior to 2019.1, this must be set to literally '%ssh.executable%', if it is not, it will be changed automatically. For later TeamCity versions this should be omitted." mandatory="false"/>
+        <param name="name" description="The name for this forward, this is also used in the parameter names" mandatory="true"/>
+        <param name="connection" type="compound" description="The connection properties for the carrier connection" mandatory="true">
+            <option name="c">
+                <param name="user" description="The user to connect as" mandatory="true"/>
+                <param dslName="sshKey" name="teamcitySshKey" description="The SSH key to authenticate with" mandatory="true"/>
+                <param dslName="sshKeyPassphrase" name="secure:teamcitySshKeyPassphrase" description="The passphrase for the SSH key to authenticate with" mandatory="false"/>
+                <param name="host" description="The host to connect to" mandatory="true"/>
+                <param name="port" type="int" description="The port to connect to (default: 22)" mandatory="false"/>
+            </option>
+        </param>
+        <param name="localPart" type="compound" description="Either local address / port or local socket can be specified (default: 127.0.0.1:&lt;random port&gt;)" mandatory="false">
+            <option name="localAddressPort" value="ADDRESS_PORT" description="Forward local address / port">
+                <param dslName="address" name="localAddress" description="The local address to bind to (default: 127.0.0.1)" mandatory="false"/>
+                <param dslName="port" name="localPort" type="int" description="The local port to forward (default: &lt;random port&gt;)" mandatory="false"/>
+            </option>
+            <option name="localSocket" value="SOCKET" description="Forward local socket">
+                <param dslName="socket" name="localSocket" description="The local socket to forward" mandatory="true"/>
+            </option>
+        </param>
+        <param name="remotePart" type="compound" description="Either remote address / port or remote socket must be specified" mandatory="true">
+            <option name="remoteAddressPort" value="ADDRESS_PORT" description="Forward to remote address / port">
+                <param dslName="address" name="remoteAddress" description="The remote address to forward to (default: 127.0.0.1)" mandatory="false"/>
+                <param dslName="port" name="remotePort" type="int" description="The remote port to forward to" mandatory="true"/>
+            </option>
+            <option name="remoteSocket" value="SOCKET" description="Forward to remote socket">
+                <param dslName="socket" name="remoteSocket" description="The remote socket to forward to" mandatory="true"/>
+            </option>
+        </param>
+    </params>
+</dsl-extension>
