@@ -280,4 +280,4 @@ limitations under the License.
 
 
 
-[plugins repository page]: https://plugins.jetbrains.com/plugin/8973-ssh-tunnel
+[plugins repository page]: https://plugins.jetbrains.com/plugin/12463-ssh-tunnel
