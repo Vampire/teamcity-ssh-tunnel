@@ -63,13 +63,26 @@ Requirements
 The plugin needs the "SSH Keys Manager" plugin - which is shipped with TeamCity - to be available and enabled.
 
 Additionally, on the build agent the `ssh` client tool needs to be installed. It can be available on the path. If it is
-not, some common places in the filesystem are searched for the executable. If it is not found, as last option, the whole
-filesystem is searched for an executable called `ssh`, which is tested for being an `ssh` client executable. If the
-`ssh` client is available but is not found, a different than the automatically found one should be used, or the
-filesystem scan should not be done, it can be configured on the build agent as a build agent property in
-`conf/buildAgent.properties`, as a system property, both with the name `ssh.executable`, or as environment variable with
-name `SSH_EXECUTABLE` in that order. The value should either be an executable name available on the path or an absolute
-path.
+not, some common places in the filesystem are searched for the executable. If the `ssh` client is available but is not
+found or a different than the automatically found one should be used, it can be configured on the build agent as a build
+agent property in `conf/buildAgent.properties`, as a system property, both with the name `ssh.executable`, or as
+environment variable with name `SSH_EXECUTABLE` in that order. The value should either be an executable name available
+on the path or an absolute path. Alternatively the value can be set to `auto`. In this case the whole filesystem is
+searched for an executable called `ssh` with an optional file extension, which is tested for being an `ssh` client
+executable.
+
+**Warnings for usage of `auto`**
+
+- _**Security:**_ If `auto` is used, the whole file tree is scanned for a file which then is executed. If the build
+  agent system is not trustworthy, or you are running untrusted builds that could leave a file called accordingly, this
+  could maliciously steal your SSH key. Do **not** use this functionality if your build agent system is not trustworthy
+  or you are running untrusted builds like pull requests from arbitrary people, but configure the SSH executable
+  directly.
+
+- _**Performance:**_ If `auto` is used, the whole file tree is scanned for a file, which is a very expensive operation
+  in terms of performance. If you use this functionality, the startup of your build agents will be significantly delayed
+  due to this file tree search. Do **not** use this functionality if this is an issue for you, but configure the SSH
+  executable directly.
 
 
 

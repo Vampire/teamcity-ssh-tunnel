@@ -79,10 +79,21 @@ public class SshDetector extends AgentLifeCycleAdapter implements InitializingBe
                 () -> Stream.of("ssh", "/usr/local/bin/ssh", "/usr/sbin/ssh", "/sbin/ssh", "/usr/bin/ssh", "/bin/ssh")
                         .filter(SshDetector::sshAvailableAtPath)
                         .findAny()
-                        .orElse(null),
-                () -> {
-                    LOG.warn("SSH executable not found in PATH or hard-coded paths. " +
+                        .orElse(null))
+                .map(Supplier::get)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .map(possibleSshExecutable -> {
+                    if (!possibleSshExecutable.equals("auto")) {
+                        return possibleSshExecutable;
+                    }
+                    LOG.warn("SSH executable is configured to value 'auto'. " +
                                     "Going to search the whole file tree for an SSH executable. " +
+                                    "This might constitute a serious security risk if malicious builds " +
+                                    "leave a fake ssh executable on the file system that could steal your " +
+                                    "SSH key. Do not enable this if you run untrusted builds. " +
+                                    "Additionally this is a pretty heavy operation and will " +
+                                    "significantly slow down the agent startup. " +
                                     "To prevent this or if the wrong one is found, " +
                                     "you can configure the path to the SSH executable " +
                                     "using an agent configuration property or system property named '{}' " +
@@ -121,26 +132,24 @@ public class SshDetector extends AgentLifeCycleAdapter implements InitializingBe
 
                                         @Override
                                         public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                                            if (exc != null) {
-                                                if (LOG.isDebugEnabled()) {
-                                                    LOG.info("Exception during walking the file tree for '{}' at {}", rootDirectory, file, exc);
-                                                } else {
-                                                    LOG.debug("Exception during walking the file tree for '{}' at {}: {}", rootDirectory, file, exc.getMessage());
-                                                }
-                                            }
+                                            logVisitException(file, exc);
                                             return CONTINUE;
                                         }
 
                                         @Override
                                         public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                                            logVisitException(dir, exc);
+                                            return CONTINUE;
+                                        }
+
+                                        private void logVisitException(Path path, IOException exc) {
                                             if (exc != null) {
                                                 if (LOG.isDebugEnabled()) {
-                                                    LOG.info("Exception during walking the file tree for '{}' at {}", rootDirectory, dir, exc);
+                                                    LOG.info("Exception during walking the file tree for '{}' at {}", rootDirectory, path, exc);
                                                 } else {
-                                                    LOG.debug("Exception during walking the file tree for '{}' at {}: {}", rootDirectory, dir, exc.getMessage());
+                                                    LOG.debug("Exception during walking the file tree for '{}' at {}: {}", rootDirectory, path, exc.getMessage());
                                                 }
                                             }
-                                            return CONTINUE;
                                         }
                                     });
                                     return sshExecutable.get().map(Stream::of).orElseGet(Stream::empty);
@@ -154,11 +163,11 @@ public class SshDetector extends AgentLifeCycleAdapter implements InitializingBe
                                 }
                             })
                             .findAny()
-                            .orElse(null);
+                            .orElseGet(() -> {
+                                LOG.info("SSH executable is configured to value 'auto', but no SSH executable was found in the file tree");
+                                return null;
+                            });
                 })
-                .map(Supplier::get)
-                .filter(Objects::nonNull)
-                .findFirst()
                 .ifPresent(sshExecutable -> agent.getConfiguration().addConfigurationParameter(SSH_EXECUTABLE_CONFIGURATION_PARAMETER_NAME, sshExecutable));
     }
 
