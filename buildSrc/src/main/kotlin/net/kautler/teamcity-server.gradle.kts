@@ -49,10 +49,10 @@ teamcity {
             useSeparateClassloader = true
 
             if (project.name == "serverPre2018.2") {
-                maximumBuild = "59999"
+                maximumBuild = "58744"
             } else {
                 allowRuntimeReload = true
-                minimumBuild = "60000"
+                minimumBuild = "60925"
             }
 
             dependencies {

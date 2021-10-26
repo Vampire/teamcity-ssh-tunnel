@@ -48,7 +48,7 @@ public class Constants {
     public static final String SSH_EXECUTABLE_REQUIREMENT_ID = SSH_EXECUTABLE_CONFIGURATION_PARAMETER_NAME + "-exists";
 
     public static final BigInteger MAX_PORT_NUMBER = BigInteger.valueOf(65_535);
-    public static final int MIN_VERSION_SUPPORTING_BUILD_FEATURE_REQUIREMENTS = 65_000;
+    public static final int MIN_VERSION_SUPPORTING_BUILD_FEATURE_REQUIREMENTS = 65_998;
 
     public static final List<String> VALID_PROPERTY_NAMES = asList(
             SSH_TUNNEL_REQUIREMENT_PROPERTY_NAME, NAME_PROPERTY_NAME,

@@ -45,8 +45,13 @@ repositories {
 
 val versions by extra(mapOf(
         // production versions
-        "teamcity" to "2019.1",
-        "teamcityTest" to "2019.1",
+        "teamcity" to "2020.1.1",
+        "teamcityTest" to "2021.2",
+        "teamcity2021.1Test" to "2021.1.4",
+        "teamcity2020.2Test" to "2020.2.4",
+        "teamcity2020.1Test" to "2020.1.5",
+        "teamcity2019.2Test" to "2019.2.4",
+        "teamcity2019.1Test" to "2019.1.5",
         "teamcity2018.2Test" to "2018.2.4",
         "teamcity2018.1" to "2018.1.2",
         "teamcity2018.1Test" to "2018.1.5",

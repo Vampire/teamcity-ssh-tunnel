@@ -37,6 +37,36 @@ teamcity {
 
         extra["teamcityHomeDir"] = teamcityEnvironment.homeDir ?: file("${teamcity.environments.baseHomeDir}/Teamcity-${teamcityEnvironment.version}")
 
+        environments.register("teamcity2021.1") {
+            version = versions["teamcity2021.1Test"]
+            val serverPlugin by project(":server").tasks.existing
+            plugins(serverPlugin)
+        }
+
+        environments.register("teamcity2020.2") {
+            version = versions["teamcity2020.2Test"]
+            val serverPlugin by project(":server").tasks.existing
+            plugins(serverPlugin)
+        }
+
+        environments.register("teamcity2020.1") {
+            version = versions["teamcity2020.1Test"]
+            val serverPlugin by project(":server").tasks.existing
+            plugins(serverPlugin)
+        }
+
+        environments.register("teamcity2019.2") {
+            version = versions["teamcity2019.2Test"]
+            val serverPlugin by project(":server").tasks.existing
+            plugins(serverPlugin)
+        }
+
+        environments.register("teamcity2019.1") {
+            version = versions["teamcity2019.1Test"]
+            val serverPlugin by project(":server").tasks.existing
+            plugins(serverPlugin)
+        }
+
         environments.register("teamcity2018.2") {
             version = versions["teamcity2018.2Test"]
             val serverPlugin by project(":server").tasks.existing

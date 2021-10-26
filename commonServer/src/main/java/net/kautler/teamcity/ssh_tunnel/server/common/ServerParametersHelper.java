@@ -18,13 +18,12 @@ package net.kautler.teamcity.ssh_tunnel.server.common;
 
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SBuildServer;
-import jetbrains.buildServer.ssh.SecureServerSshKeyManager;
 import jetbrains.buildServer.ssh.ServerSshKeyManager;
 import jetbrains.buildServer.ssh.TeamCitySshKey;
 import jetbrains.buildServer.util.MultiMap;
-import net.kautler.teamcity.ssh_tunnel.common.Constants;
 import net.kautler.teamcity.ssh_tunnel.common.ParametersHelper;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Map;
@@ -44,12 +43,20 @@ public class ServerParametersHelper extends ParametersHelper {
     @NotNull
     private final SBuildServer buildServer;
 
+    @SuppressWarnings("unchecked")
     public ServerParametersHelper(@NotNull ProjectManager projectManager,
-                                  @NotNull SecureServerSshKeyManager sshKeyManager,
+                                  @NotNull ApplicationContext applicationContext,
                                   @NotNull SBuildServer buildServer) {
         this.projectManager = projectManager;
-        this.sshKeyManager = sshKeyManager;
         this.buildServer = buildServer;
+        Class<? extends ServerSshKeyManager> serverSshKeyManagerClass;
+        try {
+            serverSshKeyManagerClass = (Class<? extends ServerSshKeyManager>) Class.forName("jetbrains.buildServer.ssh.SecureServerSshKeyManager");
+        } catch (ClassNotFoundException e) {
+            serverSshKeyManagerClass = ServerSshKeyManager.class;
+        }
+        this.sshKeyManager = applicationContext.getBean(serverSshKeyManagerClass);
+        System.out.println(this.sshKeyManager);
     }
 
     @Override
