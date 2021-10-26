@@ -56,7 +56,6 @@ public class ServerParametersHelper extends ParametersHelper {
             serverSshKeyManagerClass = ServerSshKeyManager.class;
         }
         this.sshKeyManager = applicationContext.getBean(serverSshKeyManagerClass);
-        System.out.println(this.sshKeyManager);
     }
 
     @Override
