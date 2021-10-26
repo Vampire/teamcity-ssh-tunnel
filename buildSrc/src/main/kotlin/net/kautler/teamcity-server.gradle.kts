@@ -26,8 +26,7 @@ plugins {
 
 apply<JavaPlugin>()
 
-val jetbrainsUsername by StringProperty(project, "jetbrains.username")
-val jetbrainsPassword by StringProperty(project, "jetbrains.password")
+val jetbrainsToken by StringProperty(project, "jetbrains.token")
 
 teamcity {
     if (project.name == "serverPre2018.2") {
@@ -67,8 +66,7 @@ teamcity {
         }
 
         publish {
-            username = jetbrainsUsername
-            password = jetbrainsPassword
+            token.set(jetbrainsToken)
         }
     }
 }
@@ -77,16 +75,10 @@ teamcity {
 // if inputs get optional, for example to support tokens, this can be changed to doFirst
 gradle.taskGraph.whenReady {
     if (allTasks.any { it is PublishTask }) {
-        if (jetbrainsUsername.isNullOrBlank()) {
+        if (jetbrainsToken.isNullOrBlank()) {
             throw ConfigurationException(
-                    "Please set the JetBrains username with project property 'jetbrains.username' " +
-                            "or '${rootProject.name}.jetbrains.username'. " +
-                            "If both are set, the latter will be effective.")
-        }
-        if (jetbrainsPassword.isNullOrBlank()) {
-            throw ConfigurationException(
-                    "Please set the JetBrains password with project property 'jetbrains.password' " +
-                            "or '${rootProject.name}.jetbrains.password'. " +
+                    "Please set the JetBrains token with project property 'jetbrains.token' " +
+                            "or '${rootProject.name}.jetbrains.token'. " +
                             "If both are set, the latter will be effective.")
         }
     }
